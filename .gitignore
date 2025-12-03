@@ -12,6 +12,12 @@ build/
 dist/
 *.egg-info/
 src/multisphere.egg-info/
+--extra-index-url
+--index-url
+*==*.whl
+*==*.tar.gz
+*==*.zip
+multisphere*==*
 
 # ----------------------------------------------------
 # Virtual environments

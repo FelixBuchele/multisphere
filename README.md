@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="/logo/multisphere_banner_ext.png" alt="multisphere logo" width="85%">
+  <img src="https://raw.githubusercontent.com/FelixBuchele/multisphere/main/logo/multisphere_banner_ext.png"
+       alt="multisphere logo"
+       width="85%">
 </p>
 
 <p align="center">
