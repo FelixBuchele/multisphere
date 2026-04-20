@@ -7,7 +7,7 @@ name = "multisphere"
 version = "1.0.0"
 description = "Multisphere representations of mesh and voxel geometries for DEM simulations"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "GNU GPL 3.0" }
 authors = [
   { name = "Felix Buchele", email = "felix.buchele@fau.de" }
@@ -23,7 +23,6 @@ dependencies = [
 
 classifiers = [
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -37,16 +36,18 @@ classifiers = [
 
 [project.optional-dependencies]
 viz = [
-  "pyvista"
+  "pyvista",
+  "matplotlib",
 ]
 
 boolean = [
-  "manifold3d"
+  "manifold3d",
 ]
 
 full = [
   "pyvista",
-  "manifold3d"
+  "matplotlib",
+  "manifold3d",
 ]
 
 [tool.setuptools]

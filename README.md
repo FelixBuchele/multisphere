@@ -44,17 +44,17 @@ et al. and achieves high shape accuracy at low computational cost.
 
 
 The package supports reconstruction from:
-- Triangle surface meshes (STL)
+- Triangle surface meshes (STL, PLY, OBJ)
 - Binary voxel volumes (NumPy)
 
 ## Scientific Background
 
 The multisphere algorithm is based on:
 - Voxelization of the target geometry
-- Exact Euclidean Distance Transform (EDT)
+- Euclidean Distance Transform
 - Peak refinement of EDT maxima
-- Iterative residual correction using the
-- Feature-Enhanced Distance Tensor (FEDT)
+- Iterative residual correction using a
+- Feature-Enhanced Distance Grid 
 - Termination by shape accuracy, minimum radius, or maximum sphere count
 
 This approach avoids the major drawbacks of greedy sphere removal methods, 
@@ -67,7 +67,7 @@ such as
 ## Features
 
 - multisphere reconstruction from:
-  - Triangle meshes (STL)
+  - Triangle meshes (STL, OBJ, PLY)
   - Binary voxel grids (NumPy)
 - Exact EDT-driven sphere placement
 - Iterative residual correction using FEDT
@@ -86,7 +86,7 @@ such as
 
 ## Installation
 
-Requires Python ≥ 3.9. Linux and macOS are fully supported. 
+Requires Python ≥ 3.10. Linux and macOS are fully supported. 
 Windows is supported but boolean backends may require additional setup.
 
 ### Core installation (no visualization, no STL boolean unions)
@@ -111,11 +111,11 @@ The full installation adds:
 ### Mesh based reconstruction
 
 ```python
-import multisphere as ms
+import multisphere as mss
 
-mesh = ms.load_mesh_from_stl("geometry.stl")
+mesh = mss.load_mesh("geometry.stl")
 
-sphere_pack = ms.multisphere_from_mesh(
+sphere_pack = mss.multisphere_from_mesh(
     mesh=mesh,
     div=150,
     padding=2,
@@ -126,9 +126,9 @@ sphere_pack = ms.multisphere_from_mesh(
     confine_mesh=False,
 )
 
-ms.export_sphere_pack_to_csv(sphere_pack, "spheres.csv")
-ms.export_sphere_pack_to_vtk(sphere_pack, "spheres.vtk")
-ms.export_sphere_pack_to_stl(sphere_pack, "spheres.stl")
+mss.export_sphere_pack_to_csv(sphere_pack, "spheres.csv")
+mss.export_sphere_pack_to_vtk(sphere_pack, "spheres.vtk")
+mss.export_sphere_pack_to_stl(sphere_pack, "spheres.stl")
 ```
 
 Note: STL export requires a boolean backend
@@ -137,15 +137,15 @@ Note: STL export requires a boolean backend
 ### Voxel based reconstruction
 
 ```python
-import multisphere as ms
+import multisphere as mss
 
-voxel_grid = ms.load_voxels_from_npy(
+voxel_grid = mss.load_voxels_from_npy(
     "volume.npy",
     voxel_size=1.0,
     origin=(0.0, 0.0, 0.0),
 )
 
-sphere_pack = ms.multisphere_from_voxels(
+sphere_pack = mss.multisphere_from_voxels(
     voxel_grid=voxel_grid,
     min_radius_vox=4,
     precision=0.95,
@@ -153,8 +153,8 @@ sphere_pack = ms.multisphere_from_voxels(
     max_spheres=100,
 )
 
-ms.export_sphere_pack_to_csv(sphere_pack, "spheres.csv")
-ms.export_sphere_pack_to_vtk(sphere_pack, "spheres.vtk")
+mss.export_sphere_pack_to_csv(sphere_pack, "spheres.csv")
+mss.export_sphere_pack_to_vtk(sphere_pack, "spheres.vtk")
 ```
 
 ### Examples
@@ -210,8 +210,14 @@ Institute for Multiscale Simulation (MSS)
 ## Citation
 
 Felix Buchele, Patric Müller, Thorsten Pöschel,  
-*Multi-Sphere-Shape generator for DEM simulations using the multi-sphere approach*  
-manuscript in preparation
+*Multi-Sphere-Shape generator for DEM simulations of complex-shaped particles*  
+Submitted to Powder Technology, Preprint available, DOI: 10.48550/arXiv.2603.05877
 
-A DOI will be added upon publication
+Felix Buchele, Patric Müller, Arash Moradian, Thorsten Pöschel,  
+*multisphere: a Python implementation of the Multi Sphere Shape generator (MSS) for DEM simulations*
+Submitted to SoftwareX
+
+Arash Moradian, Felix Buchele, Patric Müller, Thorsten Pöschel,
+*GEMSS: A C++ Library for Runtime Multi-Sphere Modeling of Granular Particles in DEM Simulations*
+Manuscript in preparation
 

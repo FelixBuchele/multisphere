@@ -10,14 +10,14 @@ from .multisphere_utils import create_multisphere_mesh
 
 # ---------- mesh input ----------
 
-def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
+def load_mesh(path: str) -> trimesh.Trimesh:
     """
-    Load an STL mesh using trimesh 
+    Load a mesh file (stl, ply, obj) using trimesh 
 
     Parameters
     ----------
     path : str
-        Path to the STL file.
+        Path to the mesh file.
 
     Returns
     -------
@@ -31,7 +31,7 @@ def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
     FileNotFoundError
         If the file does not exist.
     ValueError
-        If the file is not an STL or cannot be read as a valid mesh.
+        If the file is not an STL, PLY or OBJ or cannot be read as a valid mesh.
     RuntimeError
         If the loaded mesh has zero volume or invalid geometry.
     """
@@ -42,10 +42,10 @@ def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
         raise FileNotFoundError(f"Mesh file not found: '{path}'")
 
     # --- extension check ---
-    if not path.lower().endswith(".stl"):
+    if not path.lower().endswith(".stl", ".ply", ".obj"):
         raise ValueError(
-            f"File does not have .stl extension: '{path}'. "
-            "Only STL input is supported here."
+            f"File does not have .stl, .ply or .obj extension: '{path}'. "
+            "Only these mesh types are supported."
         )
 
     # --- attempt to load ---
@@ -53,7 +53,7 @@ def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
         mesh = trimesh.load_mesh(path)
     except Exception as exc:
         raise ValueError(
-            f"Failed to read STL file '{path}'. "
+            f"Failed to read mesh file '{path}'. "
             f"Original error: {exc}"
         ) from exc
 
@@ -64,7 +64,7 @@ def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
             mesh = mesh.dump(concatenate=True)
         except Exception:
             raise ValueError(
-                f"STL file '{path}' contains multiple bodies and "
+                f"mesh file '{path}' contains multiple bodies and "
                 "could not be converted to a single mesh."
             )
 
@@ -82,7 +82,7 @@ def load_mesh_from_stl(path: str) -> trimesh.Trimesh:
     if mesh.volume is None or mesh.volume <= 0.0:
         raise RuntimeError(
             f"Mesh '{path}' has zero or undefined volume. "
-            "This usually indicates a non-watertight STL."
+            "This usually indicates a non-watertight mesh."
         )
 
     return mesh
@@ -178,7 +178,7 @@ def load_voxels_from_npy(
 
 # ---------- mesh -> voxel grid ----------
 
-def mesh_to_voxel_grid(
+def _mesh_to_voxel_grid(
     mesh: trimesh.Trimesh,
     div: int,
     padding: int = 2,

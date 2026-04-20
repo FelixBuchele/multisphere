@@ -2,7 +2,7 @@
 Mesh-based example for the multisphere package.
 
 Pipeline:
-1. Load an STL mesh from the examples directory.
+1. Load a mesh from the examples directory.
 2. Build a multisphere representation from the mesh.
 3. OPTIONAL: Visualize the original mesh and the sphere pack. 
    Requires pyvista and matplotlib
@@ -24,7 +24,7 @@ import os
 from pathlib import Path
 
 from multisphere import (
-    load_mesh_from_stl,
+    load_mesh,
     multisphere_from_mesh,
     create_multisphere_mesh,
     compute_dice_coefficient,
@@ -47,7 +47,7 @@ def main() -> None:
     if not mesh_path.is_file():
         raise FileNotFoundError(
             f"Example mesh not found at: {mesh_path}\n"
-            "Place an STL file named 'example_mesh.stl' in the examples/"
+            "Place a mesh file named 'example_mesh.stl' in the examples/"
             " directory or adjust mesh_path in mesh_example.py."
         )
 
@@ -58,7 +58,7 @@ def main() -> None:
     # 2) Load mesh
     # ------------------------------------------------------------------
     print(f"Loading mesh from: {mesh_path}")
-    mesh = load_mesh_from_stl(str(mesh_path))
+    mesh = load_mesh(str(mesh_path))
 
     # ------------------------------------------------------------------
     # 3) Build multisphere from mesh
@@ -71,11 +71,11 @@ def main() -> None:
         padding=2,
         min_radius_vox=8,         # minimum sphere radius 
                                   # (avoids small spurious spheres)
-        precision=0.90,           # stop once ~90% voxel agreement is reached
+        precision=0.99,           # stop once ~90% voxel agreement is reached
         min_center_distance_vox=4,
         max_spheres=100,          # maximum number of spheres
         show_progress=False,
-        confine_mesh=False,       # confine multisphere representation to the
+        confine_mesh=True,       # confine multisphere representation to the
                                   # mesh surface
     )
 

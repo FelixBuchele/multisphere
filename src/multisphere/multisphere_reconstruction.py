@@ -10,9 +10,9 @@ from .multisphere_reconstruction_helpers import (
     _residual_distance_field,
     _filter_peaks,
 )
-from .multisphere_utils import (print_progress_bar, 
+from .multisphere_utils import ( 
     adjust_spheres_to_stl_boundary)
-from .multisphere_io import mesh_to_voxel_grid
+from .multisphere_io import _mesh_to_voxel_grid
 
 def multisphere_from_mesh(
     mesh: trimesh.Trimesh,
@@ -22,7 +22,6 @@ def multisphere_from_mesh(
     precision: float | None = None,
     min_center_distance_vox: int = 4,
     max_spheres: int | None = None,
-    show_progress: bool = True,
     confine_mesh: bool = False,
     ) -> SpherePack:
     """
@@ -30,7 +29,7 @@ def multisphere_from_mesh(
 
     This is a thin convenience wrapper around:
 
-    1. mesh_to_voxel_grid(...)
+    1. _mesh_to_voxel_grid(...)
     2. multisphere_from_voxels(...)
 
     Parameters
@@ -52,8 +51,6 @@ def multisphere_from_mesh(
         Minimum allowed distance between sphere centers in voxels.
     max_spheres : int, optional
         Maximum number of spheres. See multisphere_from_voxels.
-    show_progress : bool, optional
-        Whether to print a progress bar during reconstruction.
     confine_mesh : bool, optional
         Whether to confine the multisphere representation to the mesh surface
 
@@ -63,7 +60,7 @@ def multisphere_from_mesh(
         Sphere centers and radii in physical units, in the same
         coordinate system as the input mesh.
     """
-    voxel_grid: VoxelGrid = mesh_to_voxel_grid(
+    voxel_grid: VoxelGrid = _mesh_to_voxel_grid(
         mesh=mesh,
         div=div,
         padding=padding,
@@ -75,7 +72,6 @@ def multisphere_from_mesh(
         precision=precision,
         min_center_distance_vox=min_center_distance_vox,
         max_spheres=max_spheres,
-        show_progress=show_progress,
     )
 
     if confine_mesh:
@@ -90,7 +86,6 @@ def multisphere_from_voxels(
     precision: float | None = None,
     min_center_distance_vox: int = 4,
     max_spheres: int | None = None,
-    show_progress: bool = True,
 ) -> SpherePack:
     """
     Construct a multisphere representation from a 3D voxel grid.
@@ -111,9 +106,6 @@ def multisphere_from_voxels(
     max_spheres : int, optional
         Maximum number of spheres. If given, the algorithm stops once
         this number is reached.
-    show_progress : bool, optional
-        If True and max_spheres is not None, print a progress bar based
-        on the current number of spheres.
 
     Returns
     -------
@@ -166,6 +158,15 @@ def multisphere_from_voxels(
         )
 
     # -----------------------------------------------------------
+    # hard coded boosting decision
+    # -----------------------------------------------------------
+    # re-apply the residual distance grid after not finding additional sphere 
+    # center points max_iter times. Doing so more than 3-5 times will create 
+    # spurious spheres
+    max_iter = 3
+
+
+    # -----------------------------------------------------------
     # basic data & early exit if voxel grid is empty
     # -----------------------------------------------------------
     target_mask = voxel_grid.data.astype(bool)
@@ -202,62 +203,67 @@ def multisphere_from_voxels(
         # 2) reconstruct current spheres, compute precision,
         #    compute residual distance
         # -------------------------------------------------------
-        if sphere_table.shape[0] > 0:
-            # rasterize spheres into voxel grid
-            recon_counts = _spheres_to_grid(
-                sphere_table=sphere_table,
-                grid_shape=voxel_grid.shape,
-                dtype=float,
-            )
-
-            recon_mask = VoxelGrid(
-                data=(recon_counts.data > 0),
-                voxel_size=voxel_grid.voxel_size,
-                origin=voxel_grid.origin,
-            )
-
-            # precision termination (if requested)
-            if precision is not None:
-                voxel_precision = _compute_voxel_precision(
-                    target=voxel_grid,
-                    reconstruction=recon_mask,
+        peaks = np.empty((0,3), dtype=int)
+        
+        for iter_count in range(1,max_iter+1):
+        
+            if sphere_table.shape[0] > 0:
+                # rasterize spheres into voxel grid
+                recon_counts = _spheres_to_grid(
+                    sphere_table=sphere_table,
+                    grid_shape=voxel_grid.shape,
+                    dtype=float,
                 )
-                if voxel_precision >= precision:
-                    print(
-                        "Stopping: desired precision reached "
-                        f"(current = {voxel_precision:.4f}, "
-                        f"target = {precision:.4f})."
+    
+                recon_mask = VoxelGrid(
+                    data=(recon_counts.data > 0),
+                    voxel_size=voxel_grid.voxel_size,
+                    origin=voxel_grid.origin,
+                )
+    
+                # precision termination (if requested)
+                if precision is not None:
+                    voxel_precision = _compute_voxel_precision(
+                        target=voxel_grid,
+                        reconstruction=recon_mask,
                     )
-                    break
-
-            # distance transform of reconstruction
-            spheres_distance = recon_mask.distance_transform()
-
-            # residual distance field
-            residual_distance = _residual_distance_field(
-                original_distance=original_distance,
-                spheres_distance=spheres_distance,
+                    if voxel_precision >= precision:
+                        print(
+                            "Stopping: desired precision reached "
+                            f"(current = {voxel_precision:.4f}, "
+                            f"target = {precision:.4f})."
+                        )
+                        break
+    
+                # distance transform of reconstruction
+                spheres_distance = recon_mask.distance_transform()
+    
+                # residual distance field
+                residual_distance = _residual_distance_field(
+                    original_distance=original_distance,
+                    spheres_distance=spheres_distance,
+                )
+    
+                summed_field = distance_field + residual_distance.data
+            else:
+                # initial iteration: no spheres yet -> 
+                # use original distance field
+                summed_field = distance_field
+    
+            if np.sum(summed_field) == 0.0:
+                print(
+                    "Stopping: no remaining distance signal in summed field "
+                    "(residual field is zero everywhere)."
+                )
+                break
+    
+            # -------------------------------------------------------
+            # 3) detect peaks in summed_field
+            # -------------------------------------------------------
+            peaks = peak_local_max(
+                summed_field,
+                min_distance=min_center_distance_vox,
             )
-
-            summed_field = distance_field + residual_distance.data
-        else:
-            # initial iteration: no spheres yet → use original distance field
-            summed_field = distance_field
-
-        if np.sum(summed_field) == 0.0:
-            print(
-                "Stopping: no remaining distance signal in summed field "
-                "(residual field is zero everywhere)."
-            )
-            break
-
-        # -------------------------------------------------------
-        # 3) detect peaks in summed_field
-        # -------------------------------------------------------
-        peaks = peak_local_max(
-            summed_field,
-            min_distance=min_center_distance_vox,
-        )
 
         if peaks.size == 0:
             print("Stopping: no local maxima detected in distance field.")
@@ -300,15 +306,6 @@ def multisphere_from_voxels(
                 f"min_radius_vox = {min_radius_vox}."
             )
             break
-
-        # progress bar (only meaningful if max_spheres is given)
-        if show_progress and max_spheres is not None:
-            print_progress_bar(
-                iteration=sphere_table.shape[0],
-                total=max_spheres,
-                prefix="Spheres",
-                suffix="",
-            )
 
     # -----------------------------------------------------------
     # convert sphere_table (voxel units) → SpherePack (physical units)

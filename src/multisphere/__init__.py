@@ -31,7 +31,7 @@ Geometry utilities
 
 I/O
 ~~~
-- load_mesh_from_stl
+- load_mesh
 - load_voxels_from_npy
 - mesh_to_voxel_grid
 - export_sphere_pack_to_stl
@@ -55,9 +55,8 @@ from .multisphere_utils import (
     adjust_spheres_to_stl_boundary,
 )
 from .multisphere_io import (
-    load_mesh_from_stl,
+    load_mesh,
     load_voxels_from_npy,
-    mesh_to_voxel_grid,
     export_sphere_pack_to_stl,
     export_sphere_pack_to_csv,
     export_sphere_pack_to_vtk,
@@ -67,7 +66,7 @@ from .multisphere_visualisation import (
     plot_mesh,
 )
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     # types
@@ -81,9 +80,8 @@ __all__ = [
     "compute_dice_coefficient",
     "adjust_spheres_to_stl_boundary",
     # IO
-    "load_mesh_from_stl",
+    "load_mesh",
     "load_voxels_from_npy",
-    "mesh_to_voxel_grid",
     "export_sphere_pack_to_stl",
     "export_sphere_pack_to_csv",
     "export_sphere_pack_to_vtk",
