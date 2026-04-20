@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/FelixBuchele/multisphere/main/logo/multisphere_banner_ext.png"
+  <img src="https://raw.githubusercontent.com/FelixBuchele/multisphere/main/logo/multisphere_banner_ext.png?v=2"
        alt="multisphere logo"
        width="85%">
 </p>
@@ -211,13 +211,13 @@ Institute for Multiscale Simulation (MSS)
 
 Felix Buchele, Patric Müller, Thorsten Pöschel,  
 *Multi-Sphere-Shape generator for DEM simulations of complex-shaped particles*  
-Submitted to Powder Technology, Preprint available, DOI: 10.48550/arXiv.2603.05877
+Submitted to Powder Technology, Preprint available, DOI: 10.48550/arXiv.2603.05877  
 
 Felix Buchele, Patric Müller, Arash Moradian, Thorsten Pöschel,  
-*multisphere: a Python implementation of the Multi Sphere Shape generator (MSS) for DEM simulations*
-Submitted to SoftwareX
+*multisphere: a Python implementation of the Multi Sphere Shape generator (MSS) for DEM simulations*  
+Submitted to SoftwareX  
 
-Arash Moradian, Felix Buchele, Patric Müller, Thorsten Pöschel,
-*GEMSS: A C++ Library for Runtime Multi-Sphere Modeling of Granular Particles in DEM Simulations*
-Manuscript in preparation
+Arash Moradian, Felix Buchele, Patric Müller, Thorsten Pöschel,  
+*GEMSS: A C++ Library for Runtime Multi-Sphere Modeling of Granular Particles in DEM Simulations*  
+Manuscript in preparation  
 
