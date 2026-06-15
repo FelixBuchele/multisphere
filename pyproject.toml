@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "multisphere"
-version = "1.0.0"
+version = "1.1.1"
 description = "Multisphere representations of mesh and voxel geometries for DEM simulations"
 readme = "README.md"
 requires-python = ">=3.10"

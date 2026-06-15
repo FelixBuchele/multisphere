@@ -36,13 +36,15 @@ def load_mesh(path: str) -> trimesh.Trimesh:
         If the loaded mesh has zero volume or invalid geometry.
     """
 
+    path = str(path)
+
     # --- existence check ---
     import os
     if not os.path.isfile(path):
         raise FileNotFoundError(f"Mesh file not found: '{path}'")
 
     # --- extension check ---
-    if not path.lower().endswith(".stl", ".ply", ".obj"):
+    if not path.lower().endswith( (".stl", ".ply", ".obj") ):
         raise ValueError(
             f"File does not have .stl, .ply or .obj extension: '{path}'. "
             "Only these mesh types are supported."

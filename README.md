@@ -21,9 +21,9 @@
     <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square"
          alt="License: GPLv3">
   </a>
-  <a href="#citation">
-    <img src="https://img.shields.io/badge/DOI-pending-lightgrey.svg?style=flat-square"
-         alt="DOI: pending">
+  <a href="https://doi.org/10.1016/j.powtec.2026.122635">
+    <img src="https://img.shields.io/badge/DOI-J.PowderTechnol.-green.svg?style=flat-square"
+         alt="10.1016/j.powtec.2026.122635">
   </a>
 </p>
 
@@ -209,15 +209,14 @@ Institute for Multiscale Simulation (MSS)
 
 ## Citation
 
-Felix Buchele, Patric Müller, Thorsten Pöschel,  
-*Multi-Sphere-Shape generator for DEM simulations of complex-shaped particles*  
-Submitted to Powder Technology, Preprint available, DOI: 10.48550/arXiv.2603.05877  
+Felix Buchele, Patric Müller, Thorsten Pöschel,<br>
+*Multi-Sphere-Shape generator for DEM simulations of complex-shaped particles*<br>
+Powder Technology, 480, 2026, 10.1016/j.powtec.2026.122635
 
-Felix Buchele, Patric Müller, Arash Moradian, Thorsten Pöschel,  
-*multisphere: a Python implementation of the Multi Sphere Shape generator (MSS) for DEM simulations*  
-Submitted to SoftwareX  
+Felix Buchele, Patric Müller, Arash Moradian, Thorsten Pöschel,<br>
+*multisphere: a Python implementation of the Multi Sphere Shape generator (MSS) for DEM simulations*<br>
+Submitted to SoftwareX, https://ssrn.com/abstract=6614754
 
-Arash Moradian, Felix Buchele, Patric Müller, Thorsten Pöschel,  
-*GEMSS: A C++ Library for Runtime Multi-Sphere Modeling of Granular Particles in DEM Simulations*  
-Manuscript in preparation  
-
+Arash Moradian, Felix Buchele, Patric Müller, Thorsten Pöschel,<br>
+*GEMSS: A C++ Library for Runtime Multi-Sphere Modeling of Granular Particles in DEM Simulations*<br>
+Manuscript in preparation
